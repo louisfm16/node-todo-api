@@ -1,8 +1,9 @@
 // External Imports
 const express = require('express');
 const bodyParser = require('body-parser');
+const {ObjectID} = require('mongodb');
 
-// Loacl Imports
+// Local Imports
 var {mongoose} = require('./db/mongoose.js');
 var {Todo} = require('./models/todo.js');
 var {User} = require('./models/user.js');
@@ -28,6 +29,25 @@ app.get('/todos', (req, res) => {
         res.send({todos: todos});
     }, (e) => {
         res.status(400).send(e);
+    });
+});
+
+// GET /todos/id(2315sadjshadk323e4)
+app.get('/todos/:id', (req, res) => {
+    var id = req.params.id;
+
+    if(!ObjectID.isValid(id)) {
+        return res.status(404).send({});
+    }
+
+    Todo.findById(id).then((todo) => {
+        if(!todo) {
+            return res.status(404).send({});
+        }
+
+        res.send({todo: todo});
+    }).catach((e) => {
+        res.status(400).send({});
     });
 });
 
