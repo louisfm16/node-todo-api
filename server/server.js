@@ -9,6 +9,7 @@ var {Todo} = require('./models/todo.js');
 var {User} = require('./models/user.js');
 
 var app = express();
+const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
@@ -32,7 +33,6 @@ app.get('/todos', (req, res) => {
     });
 });
 
-// GET /todos/id(2315sadjshadk323e4)
 app.get('/todos/:id', (req, res) => {
     var id = req.params.id;
 
@@ -51,8 +51,8 @@ app.get('/todos/:id', (req, res) => {
     });
 });
 
-app.listen(3000, () => {
-    console.log('Started @ http://localhost:3000/');
+app.listen(port, () => {
+    console.log(`Started @ port: ${port}`);
 });
 
 module.exports = {
