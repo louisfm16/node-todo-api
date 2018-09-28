@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 // #endregion Imports
 
+var someSecretVal = '123abc'; // Will be salted & moved to config file
+
 var UserSchema = new mongoose.Schema({
     email: {
         type: String,
@@ -39,8 +41,6 @@ UserSchema.methods.toJSON = function() {
 };
 
 UserSchema.methods.generateAuthToken = function() {
-    var someSecretVal = '123abc'; // Will be salted & moved to config file
-
     var access = 'auth';
     var token = jwt.sign({
         _id: this._id.toHexString(),
@@ -51,6 +51,22 @@ UserSchema.methods.generateAuthToken = function() {
 
     return this.save().then(() => {
         return token;
+    });
+};
+
+UserSchema.statics.findByToken = function(token) {
+    var decoded;
+
+    try {
+        decoded = jwt.verify(token, someSecretVal);
+    } catch(e) {
+        return Promise.reject();
+    }
+
+    return this.findOne({
+        '_id': decoded._id,
+        'tokens.token': token,
+        'tokens.access': 'auth'
     });
 };
 

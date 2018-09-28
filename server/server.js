@@ -11,6 +11,7 @@ const {ObjectID} = require('mongodb');
 var {mongoose} = require('./db/mongoose.js');
 var {Todo} = require('./models/todo.js');
 var {User} = require('./models/user.js');
+var {authenticate} = require('./middleware/authenticate.js');
 // #endregion Imports
 
 var app = express();
@@ -122,6 +123,10 @@ app.post('/users', (req, res) => {
     }).catch((e) => {
         res.status(400).send(e);
     });
+});
+
+app.get('/users/me', authenticate, (req, res) => {
+    res.status(200).send(req.user);
 });
 
 // #endregion User's
