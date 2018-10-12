@@ -6,8 +6,6 @@ const _ = require('lodash');
 const bcrypt = require('bcryptjs');
 // #endregion Imports
 
-var someSecretVal = '123abc'; // Will be salted & moved to config file
-
 var UserSchema = new mongoose.Schema({
     email: {
         type: String,
@@ -46,7 +44,7 @@ UserSchema.methods.generateAuthToken = function() {
     var token = jwt.sign({
         _id: this._id.toHexString(),
         access
-    }, someSecretVal).toString();
+    }, process.env.JWT_SECRET).toString();
 
     this.tokens = this.tokens.concat([{access, token}]);
 
@@ -67,7 +65,7 @@ UserSchema.statics.findByToken = function(token) {
     var decoded;
 
     try {
-        decoded = jwt.verify(token, someSecretVal);
+        decoded = jwt.verify(token, process.env.JWT_SECRET);
     } catch(e) {
         return Promise.reject();
     }

@@ -1,5 +1,5 @@
 // #region Imports
-require('../config/config.js');
+require('./config/config.js');
 
 // External Imports
 const _ = require('lodash');
